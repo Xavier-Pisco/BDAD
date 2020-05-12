@@ -93,6 +93,34 @@ idReparacao NUMBER REFERENCES Reparacao(idReparacao),
 numHoras NUMBER(7,0) CHECK (numHoras >= 0),
 CONSTRAINT pk_funcionario_reparacao PRIMARY KEY (idFuncionario, idReparacao));
 
+
+Create Trigger AtualizaStockPecas
+	AFTER INSERT ON ReparacaoPeca
+Begin
+	UPDATE Peca
+	SET quantidade = quantidade - New.quantidade
+	WHERE idPeca = New.idPeca;
+END;
+
+
+Create Trigger defaultCliente
+	AFTER INSERT ON Reparacao
+	When New.idCliente is NULL
+Begin
+	UPDATE Reparacao
+	SET idCliente = (select idCliente From Carro WHERE Carro.idCarro = New.idCarro)
+	WHERE idReparacao = New.idReparacao;
+End;
+
+
+Create Trigger validaPecasReparacao
+	Before INSERT ON ReparacaoPeca
+Begin
+	Case
+		When New.quantidade > (Select quantidade FROM Peca WHERE New.idPeca = Peca.idPeca)
+		Then Select raise(ignore);
+END;
+
 -- Apaga os registos das tabelas
 DELETE FROM FuncionarioReparacao;
 DELETE FROM Funcionario;
@@ -153,7 +181,7 @@ INSERT INTO Carro (matricula, idModelo, idCliente)
 INSERT INTO Reparacao (dataInicio, dataFim, idCliente, idCarro)
 	VALUES ('2010-09-17', '2010-09-20', 1, 3);
 INSERT INTO Reparacao (dataInicio, dataFim, idCliente, idCarro)
-	VALUES ('2010-09-15', '2010-09-16', 4, 1);
+	VALUES ('2010-09-15', '2010-09-16', null, 1);
 INSERT INTO Reparacao (dataInicio, dataFim, idCliente, idCarro)
 	VALUES ('2009-09-18', '2009-09-27', 4, 5);
 
@@ -206,5 +234,5 @@ INSERT INTO FuncionarioReparacao (idFuncionario, idReparacao, numHoras) VALUES (
 --Select nome FROM Cliente WHERE idCliente NOT IN (Select idCliente FROM Cliente NATURAL JOIN Carro);
 --Select idCarro, (Select count(*) FROM Reparacao WHERE Reparacao.idCarro = Carro.idCarro) FROM Carro;
 --Select idCarro, Cast (julianday(dataFim) - julianday(dataInicio) AS INTEGER) FROM Reparacao;
-Select avg(custoUnitario), sum(custoTotal), sum(quantidade), max(custoUnitario), min(custoUnitario) FROM Peca LEFT JOIN (Select quantidade*custoUnitario as custoTotal FROM Peca);
+--Select avg(custoUnitario), sum(custoTotal), sum(quantidade), max(custoUnitario), min(custoUnitario) FROM Peca LEFT JOIN (Select quantidade*custoUnitario as custoTotal FROM Peca);
 
