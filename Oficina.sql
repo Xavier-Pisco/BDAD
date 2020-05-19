@@ -115,10 +115,12 @@ End;
 
 Create Trigger validaPecasReparacao
 	Before INSERT ON ReparacaoPeca
+	WHEN New.quantidade > (Select quantidade FROM Peca WHERE New.idPeca = Peca.idPeca) or
+		New.idPeca not in (Select Peca.idPeca FROM ((PecaModelo, Peca on Peca.idPeca = PecaModelo.idPeca), Carro on Carro.idModelo = PecaModelo.idModelo), 
+		Reparacao on (Reparacao.idCarro = Carro.idCarro AND New.idReparacao = Reparacao.idReparacao) 
+		 WHERE New.idPeca = Peca.idPeca)
 Begin
-	Case
-		When New.quantidade > (Select quantidade FROM Peca WHERE New.idPeca = Peca.idPeca)
-		Then Select raise(ignore);
+	Select raise(ignore);
 END;
 
 -- Apaga os registos das tabelas
@@ -199,6 +201,7 @@ INSERT INTO PecaModelo (idPeca, idModelo) VALUES (2, 3);
 -- Inser��o de registos na tabela ReparacaoPeca
 INSERT INTO ReparacaoPeca (idReparacao, idPeca, quantidade) VALUES (2, 1, 8);
 INSERT INTO ReparacaoPeca (idReparacao, idPeca, quantidade) VALUES (3, 2, 2);
+INSERT INTO ReparacaoPeca (idReparacao, idPeca, quantidade) VALUES (1, 1, 10);
 
 -- Inser��o de registos na tabela Especialidade
 INSERT INTO Especialidade(nome, custoHorario)
