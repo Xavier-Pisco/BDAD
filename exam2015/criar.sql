@@ -143,20 +143,6 @@ Where User.id not in(
 
 -- Pergunta 16
 /*
-Select avg(C)
-From Photo, (
-    Select Likes.photo as likesPhoto
-    From Likes
-    Group by Likes.photo
-    Having count(*) > 3
-) on Photo.id = likesPhoto, (
-    Select count(*) as C, AppearsIn.photo as appearsInPhoto
-    From AppearsIn
-    Group by AppearsIn.photo
-) on Photo.id = appearsInPhoto;
-*/
-
-
 Select avg(C) From (
     Select Likes.photo as likesPhoto
     From Likes
@@ -167,6 +153,7 @@ Select avg(C) From (
     From AppearsIn
     Group by AppearsIn.photo
 ) on likesPhoto = appearsInPhoto;
+*/
 
 -- Pergunta 17
 /*
