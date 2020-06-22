@@ -8,7 +8,7 @@ CREATE TABLE Aplicacao (
 drop table if exists Servidor;
 CREATE TABLE Servidor (
 	idServidor integer primary key,
-	idResponsavel integer references Aplicacao(idAplicacao),
+	idResponsavel integer references Pessoa(idPessoa),
 	vulneravel text check (vulneravel in ("sim", "nao")) default "nao",
 	hostname text
 );
@@ -86,14 +86,17 @@ insert into comentario (idBug, idAutor, data, texto) values (1, 2, "2013-01-02",
 -- Pergunta 3a
 /*
 Select hostname, nome
-From Servidor, Pessoa on idResponsavel = idPessoa;
+From Servidor, Pessoa on idResponsavel = idPessoa
+Where Servidor.vulneravel Like "sim";
 */
 
 -- Pergunta 3b
 /*
 Select hostname, Bug.descricao, Pessoa.nome
 From servidor Natural Join AplicacaoServidor Natural Join Aplicacao,
-     Bug using(idAplicacao), Pessoa on servidor.idResponsavel = idPessoa;
+     Bug using(idAplicacao), Pessoa on servidor.idResponsavel = idPessoa
+where Bug.vulnerabilidade Like "sim"
+Order By hostname, Bug.descricao asc;
 */
 
 -- Pergunta 3c
