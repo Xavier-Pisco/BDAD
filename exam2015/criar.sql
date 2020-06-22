@@ -156,6 +156,18 @@ From Photo, (
 ) on Photo.id = appearsInPhoto;
 */
 
+
+Select avg(C) From (
+    Select Likes.photo as likesPhoto
+    From Likes
+    Group by Likes.photo
+    Having count(*) > 3
+),  (
+    Select count(*) as C, AppearsIn.photo as appearsInPhoto
+    From AppearsIn
+    Group by AppearsIn.photo
+) on likesPhoto = appearsInPhoto;
+
 -- Pergunta 17
 /*
 drop view if exists DRFriends;
