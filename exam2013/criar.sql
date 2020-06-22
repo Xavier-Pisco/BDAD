@@ -138,7 +138,7 @@ Select * From servidor;
 
 -- Pergunta 3f
 /*
-Drio trigger if exists addBug;
+Drop trigger if exists addBug;
 
 Create trigger addBug
 After insert on bug
